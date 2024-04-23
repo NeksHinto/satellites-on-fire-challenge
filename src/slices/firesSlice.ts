@@ -4,12 +4,14 @@ import { ApiService } from "../services/apiService";
 import { RootState } from "../state/store";
 import dayjs from "dayjs";
 import { FireState, FilterState } from "../lib/state";
+import { AxiosError } from "axios";
+import { clearError, setError } from "./errorSlice";
 
 const initialState: FireState = {
   data: [],
   filters: [],
   loading: false,
-  error: null,
+  error: false,
 };
 
 export const loadFires = createAsyncThunk<
@@ -17,6 +19,7 @@ export const loadFires = createAsyncThunk<
   FilterState,
   { state: RootState }
 >("fires/loadFires", async (filters: FilterState, thunkAPI) => {
+  thunkAPI.dispatch(clearError());
   try {
     const apiService = new ApiService();
     const date = dayjs(filters.date);
@@ -31,7 +34,13 @@ export const loadFires = createAsyncThunk<
     }
     return fireData;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error);
+    const axiosError = error as AxiosError;
+    const errorMessage =
+      axiosError.response?.status === 404
+        ? "No fires found for selected date"
+        : axiosError.message || "Failed to fetch fires";
+    thunkAPI.dispatch(setError(errorMessage));
+    return Promise.reject(error);
   }
 });
 
@@ -43,7 +52,7 @@ const firesSlice = createSlice({
     builder
       .addCase(loadFires.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.error = false;
       })
       .addCase(loadFires.fulfilled, (state, action) => {
         state.loading = false;
@@ -51,7 +60,7 @@ const firesSlice = createSlice({
       })
       .addCase(loadFires.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch fires";
+        state.error = true;
       });
   },
 });

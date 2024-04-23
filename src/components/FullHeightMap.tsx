@@ -9,6 +9,7 @@ import Filters from "./Filters";
 import { FilterState } from "../lib/state";
 import dayjs from "dayjs";
 import FiresList from "./FiresList";
+import { Snackbar, Alert } from "@mui/material";
 
 export const FullHeightMap: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,10 +37,6 @@ export const FullHeightMap: React.FC<{}> = () => {
     });
   };
 
-  if (error?.message) {
-    return <div>Error: {error.message}</div>;
-  }
-
   return (
     <div className="full-screen-map">
       <MapContainer center={position} zoom={zoom} style={{ height: "100%" }}>
@@ -53,10 +50,15 @@ export const FullHeightMap: React.FC<{}> = () => {
           filters={serializableFilter}
         />
         <FiresList
-          numberOfPoints={fires.data.length}
-          pointData={fires.data}
+          numberOfPoints={fires?.data?.length || 0}
+          pointData={fires?.data}
           pageSize={POINTS_TO_SHOW_PER_PAGE}
         />
+        {fires.error && (
+          <Snackbar open={fires.error} autoHideDuration={6000}>
+            <Alert severity="error">{error.message}</Alert>
+          </Snackbar>
+        )}
       </MapContainer>
     </div>
   );

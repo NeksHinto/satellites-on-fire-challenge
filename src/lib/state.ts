@@ -4,7 +4,7 @@ export interface FireState {
   data: Fire[];
   filters: FilterOptions[];
   loading: boolean;
-  error: string | null;
+  error: boolean;
 }
 
 export interface FilterState {

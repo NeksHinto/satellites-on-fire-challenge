@@ -30,8 +30,8 @@ const FiresList: React.FC<FiresListProps> = ({
     setCurrentPage(newPage);
   };
 
-  const totalPages = Math.ceil(pointData.length / pageSize);
-  const currentPoints = pointData.slice(
+  const totalPages = Math.ceil(pointData?.length / pageSize) || 0;
+  const currentPoints = pointData?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -53,7 +53,7 @@ const FiresList: React.FC<FiresListProps> = ({
       <Typography variant="body1">
         Number of Points: {numberOfPoints}
       </Typography>
-      {currentPoints.map((point, index) => (
+      {currentPoints?.length > 0 ? currentPoints.map((point, index) => (
         <Accordion key={index}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -73,7 +73,9 @@ const FiresList: React.FC<FiresListProps> = ({
             ))}
           </AccordionDetails>
         </Accordion>
-      ))}
+      )) : (
+        <Typography variant="body1">There are no markers on the map.</Typography>
+      )}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Pagination
           count={totalPages}

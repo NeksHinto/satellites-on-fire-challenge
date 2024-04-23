@@ -15,7 +15,7 @@ export const MarkersComponent: React.FC<{ fires: FireState }> = ({ fires }) => {
   };
 
   const renderMarkers = (fires: FireState) => {
-    return fires.data.map((fire) => (
+    return fires?.data?.map((fire) => (
       <Marker key={fire.id} position={[fire.latitude, fire.longitude]}>
         <Popup>Reliability: {fire.reliability}</Popup>
         <CircleMarker
