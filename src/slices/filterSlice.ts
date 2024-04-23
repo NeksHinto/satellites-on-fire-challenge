@@ -1,14 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { FilterState } from "../lib/state";
+import dayjs from "dayjs";
 
-interface FilterOptions {
-  date: Date | string;
-  satellite: string;
-}
-
-const initialState: FilterOptions = {
-  date: "2023-01-01/T00",
-  // date: new Date().toISOString().slice(0, 10) + "/T" + new Date().getHours().toString().padStart(2, "0"),
-  satellite: "NOAA-19",
+const initialState: FilterState = {
+  date: dayjs("01-01-2023").format(),
+  satellite: "",
 };
 
 const filterSlice = createSlice({

@@ -1,12 +1,12 @@
 import { GOESCategory, VIIRSCategory } from "./types";
 
-export const satellites: string[] = [
-  "VIIRS Suomi NPP",
-  "VIIRS NOAA-20",
-  "MODIS Aqua",
-  "MODIS Terra",
-  "noaa-goes16",
-  "noaa-goes17",
+export const satellitesOptions = [
+  { label: "VIIRS Suomi NPP", value: "viirs-suomi-npp" },
+  { label: "VIIRS NOAA-20", value: "viirs-noaa-20" },
+  { label: "MODIS Aqua", value: "modis-aqua" },
+  { label: "MODIS Terra", value: "modis-terra" },
+  { label: "noaa-goes16", value: "noaa-goes16" },
+  { label: "noaa-goes17", value: "noaa-goes17" },
 ];
 
 //Categorías para el noaa-goes16 y noaa-goes17 (mismas categorías para ambos satélites):

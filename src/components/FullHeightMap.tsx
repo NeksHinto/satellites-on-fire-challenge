@@ -1,82 +1,56 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LatLngTuple } from "leaflet";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  CircleMarker,
-} from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import { loadFires } from "../slices/firesSlice";
 import { AppDispatch, RootState } from "../state/store";
-
-export interface Fire {
-  id: string;
-  latitude: number;
-  longitude: number;
-  reliability: string | number;
-}
+import MarkersComponent from "./MarkersComponent";
+import Filters from "./Filters";
+import { FilterState } from "../lib/state";
+import dayjs from "dayjs";
 
 export const FullHeightMap: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const fires = useSelector((state: RootState) => state.fires);
   const filters = useSelector((state: RootState) => state.filters);
   const error = useSelector((state: RootState) => state.errors);
+  const [serializableFilter, setSerializableFilter] = useState({
+    date: dayjs(),
+    satellite: "",
+  });
   const position: LatLngTuple = [41.881832, -87.623177];
   const zoom = 2;
 
-  const getMarkerColor = (reliability: number) => {
-    if (reliability >= 0.8) {
-      return "darkred";
-    } else if (reliability >= 0.5) {
-      return "red";
-    } else {
-      return "yellow";
-    }
-  };
-
   useEffect(() => {
-    dispatch(
-      loadFires({
-        date: "",
-        satellite: "",
-      })
-    );
-  }, [dispatch]);
+    handleFilterChange(filters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
-  useEffect(() => {
+  const handleFilterChange = (filters: FilterState) => {
     dispatch(loadFires(filters));
-  }, [dispatch, filters]);
+    setSerializableFilter({
+      date: dayjs(filters.date),
+      satellite: filters.satellite,
+    });
+  };
 
   if (error?.message) {
     return <div>Error: {error.message}</div>;
   }
 
   return (
-    <div>
-      {fires.loading ? (
-        <p>Loading fires...</p>
-      ) : error?.message ? (
-        <p>Error: {error.message}</p>
-      ) : (
-        <MapContainer center={position} zoom={zoom} style={{ height: "100%" }}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {fires.data.map((fire) => (
-            <Marker key={fire.id} position={[fire.latitude, fire.longitude]}>
-              <Popup>Reliability: {fire.reliability}</Popup>
-              <CircleMarker
-                center={[fire.latitude, fire.longitude]}
-                radius={5}
-                color={getMarkerColor(+fire.reliability)}
-              />
-            </Marker>
-          ))}
-        </MapContainer>
-      )}
+    <div className="full-screen-map">
+      <MapContainer center={position} zoom={zoom} style={{ height: "100%" }}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {!fires.loading && <MarkersComponent fires={fires} />}
+        <Filters
+          onFilterChange={handleFilterChange}
+          filters={serializableFilter}
+        />
+      </MapContainer>
     </div>
   );
 };

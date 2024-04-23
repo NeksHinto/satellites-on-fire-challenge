@@ -15,7 +15,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const App: React.FC = () => {
   return (
-    <div className="full-screen-map">
+    <div>
       <FullHeightMap />
     </div>
   );

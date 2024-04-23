@@ -1,15 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Fire } from "../components/FullHeightMap";
-import { FilterOptions } from "../lib/types";
-import { getReliability } from "../lib/getReliability";
-import { ApiService } from "../services/ApiService";
-
-export interface FireState {
-  data: Fire[];
-  filters: FilterOptions[];
-  loading: boolean;
-  error: string | null;
-}
+import { Fire } from "../lib/types";
+import { ApiService } from "../services/apiService";
+import { RootState } from "../state/store";
+import dayjs from "dayjs";
+import { FireState, FilterState } from "../lib/state";
 
 const initialState: FireState = {
   data: [],
@@ -18,25 +12,28 @@ const initialState: FireState = {
   error: null,
 };
 
-export const loadFires = createAsyncThunk(
-  "fires/loadFires",
-  async (filters: FilterOptions, thunkAPI) => {
-    try {
-      const apiService = new ApiService();
-      const date = filters?.date || "2023-01-01/T00";
-      const fireData = await apiService.getFireDataByDate(date);
-      const processedFires = fireData.map((fire) => ({
-        id: fire.id,
-        latitude: fire.y,
-        longitude: fire.x,
-        reliability: getReliability(fire.sat, fire.conf),
-      }));
-      return processedFires;
-    } catch (error) {
-      return Promise.reject(error);
+export const loadFires = createAsyncThunk<
+  Fire[],
+  FilterState,
+  { state: RootState }
+>("fires/loadFires", async (filters: FilterState, thunkAPI) => {
+  try {
+    const apiService = new ApiService();
+    const date = dayjs(thunkAPI.getState().filters.date);
+    const formattedDate = date.format("YYYY-MM-DD");
+    const formattedTime = date.format("HH");
+    const fireData: Fire[] = await apiService.getFireDataByDate(
+      formattedDate,
+      formattedTime
+    );
+    if (filters?.satellite) {
+      return fireData.filter((fire) => fire.satellite === filters.satellite);
     }
+    return fireData;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
   }
-);
+});
 
 const firesSlice = createSlice({
   name: "fires",

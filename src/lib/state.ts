@@ -1,10 +1,15 @@
-import { Fire } from "../components/FullHeightMap";
+import { FilterOptions, Fire } from "./types";
 
 export interface FireState {
-  id: string;
-  latitude: number;
-  longitude: number;
-  reliability: string | number;
+  data: Fire[];
+  filters: FilterOptions[];
+  loading: boolean;
+  error: string | null;
+}
+
+export interface FilterState {
+  date: string;
+  satellite: string;
 }
 
 export interface ErrorState {
