@@ -2,6 +2,7 @@ import { Dayjs } from "dayjs";
 
 export interface Fire {
   id: string;
+  date: string;
   latitude: number;
   longitude: number;
   reliability: string | number;

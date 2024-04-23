@@ -8,6 +8,7 @@ import MarkersComponent from "./MarkersComponent";
 import Filters from "./Filters";
 import { FilterState } from "../lib/state";
 import dayjs from "dayjs";
+import FiresList from "./FiresList";
 
 export const FullHeightMap: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,6 +21,7 @@ export const FullHeightMap: React.FC<{}> = () => {
   });
   const position: LatLngTuple = [41.881832, -87.623177];
   const zoom = 2;
+  const POINTS_TO_SHOW_PER_PAGE = 8;
 
   useEffect(() => {
     handleFilterChange(filters);
@@ -49,6 +51,11 @@ export const FullHeightMap: React.FC<{}> = () => {
         <Filters
           onFilterChange={handleFilterChange}
           filters={serializableFilter}
+        />
+        <FiresList
+          numberOfPoints={fires.data.length}
+          pointData={fires.data}
+          pageSize={POINTS_TO_SHOW_PER_PAGE}
         />
       </MapContainer>
     </div>

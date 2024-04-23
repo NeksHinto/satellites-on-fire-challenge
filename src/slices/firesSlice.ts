@@ -19,7 +19,7 @@ export const loadFires = createAsyncThunk<
 >("fires/loadFires", async (filters: FilterState, thunkAPI) => {
   try {
     const apiService = new ApiService();
-    const date = dayjs(thunkAPI.getState().filters.date);
+    const date = dayjs(filters.date);
     const formattedDate = date.format("YYYY-MM-DD");
     const formattedTime = date.format("HH");
     const fireData: Fire[] = await apiService.getFireDataByDate(

@@ -1,40 +1,87 @@
 import React, { useState } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Pagination,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Fire } from "../lib/types";
 
 interface FiresListProps {
-  numberOfMarkers: number;
-  pointInfo?: { [key: string]: string }[];
+  numberOfPoints: number;
+  pointData: Fire[];
+  pageSize: number;
 }
 
-const FiresList: React.FC<FiresListProps> = ({ numberOfMarkers, pointInfo }) => {
-  const [expanded, setExpanded] = useState(false);
+const FiresList: React.FC<FiresListProps> = ({
+  numberOfPoints,
+  pointData,
+  pageSize,
+}) => {
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const handleChange = (panel: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
-    setExpanded(panel === "expand");
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number
+  ) => {
+    setCurrentPage(newPage);
   };
 
+  const totalPages = Math.ceil(pointData.length / pageSize);
+  const currentPoints = pointData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   return (
-    <Box sx={{ backgroundColor: "white", padding: "16px", borderRadius: "4px", mb: 2 }}>
+    <Box
+      sx={{
+        zIndex: 1000,
+        position: "absolute",
+        top: "30%",
+        left: 10,
+        backgroundColor: "white",
+        padding: "16px",
+        borderRadius: "4px",
+        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       <Typography variant="h6">Fire Information</Typography>
-      <Typography variant="body1">Number of Markers: {numberOfMarkers}</Typography>
-      {pointInfo && (
-        <Accordion expanded={expanded} onChange={handleChange}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-            <Typography variant="body1">Point Details</Typography>
+      <Typography variant="body1">
+        Number of Points: {numberOfPoints}
+      </Typography>
+      {currentPoints.map((point, index) => (
+        <Accordion key={index}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls={`panel${index + 1}-content`}
+            id={`panel${index + 1}-header`}
+          >
+            <Typography variant="body1">{`Point (${point.latitude}, ${point.longitude})`}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {pointInfo.map((point, index) => (
-              <div key={index}>
+            {Object.entries(point).map(([key, value]) => (
+              <div key={key}>
                 <Typography variant="body2" fontWeight="bold">
-                  {point.key}
+                  {key}
                 </Typography>
-                <Typography variant="body2">{point.value}</Typography>
+                <Typography variant="body2">{value}</Typography>
               </div>
             ))}
           </AccordionDetails>
         </Accordion>
-      )}
+      ))}
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
     </Box>
   );
 };

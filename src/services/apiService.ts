@@ -10,6 +10,7 @@ export class ApiService {
     const fireData = await axios.get<FireDataResponse>(url);
     const processedFires = fireData.data.data.getPublicWildfireByDate.items.map((fire) => ({
       id: fire.id,
+      date: fire.date,
       latitude: fire.y,
       longitude: fire.x,
       reliability: getReliability(fire.sat, fire.conf),
