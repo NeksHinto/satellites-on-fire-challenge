@@ -50,7 +50,7 @@ const FiresList: React.FC<FiresListProps> = ({
       }}
     >
       <Typography variant="h6">Fire Information</Typography>
-      <Typography variant="body1">
+      <Typography variant="body1" data-testId="markers-list">
         Number of Points: {numberOfPoints}
       </Typography>
       {currentPoints?.length > 0 ? currentPoints.map((point, index) => (

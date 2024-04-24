@@ -5,7 +5,7 @@ export interface Fire {
   date: string;
   latitude: number;
   longitude: number;
-  reliability: string | number;
+  reliability: number;
   satellite: string;
 }
 

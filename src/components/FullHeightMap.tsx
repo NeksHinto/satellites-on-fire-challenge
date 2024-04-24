@@ -11,13 +11,13 @@ import dayjs from "dayjs";
 import FiresList from "./FiresList";
 import { Snackbar, Alert } from "@mui/material";
 
-export const FullHeightMap: React.FC<{}> = () => {
+const FullHeightMap: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const fires = useSelector((state: RootState) => state.fires);
   const filters = useSelector((state: RootState) => state.filters);
   const error = useSelector((state: RootState) => state.errors);
   const [serializableFilter, setSerializableFilter] = useState({
-    date: dayjs(),
+    date: dayjs(filters.date),
     satellite: "",
   });
   const position: LatLngTuple = [41.881832, -87.623177];
@@ -44,7 +44,7 @@ export const FullHeightMap: React.FC<{}> = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {!fires.loading && <MarkersComponent fires={fires} />}
+        {!fires?.loading && <MarkersComponent fires={fires} />}
         <Filters
           onFilterChange={handleFilterChange}
           filters={serializableFilter}
@@ -54,7 +54,7 @@ export const FullHeightMap: React.FC<{}> = () => {
           pointData={fires?.data}
           pageSize={POINTS_TO_SHOW_PER_PAGE}
         />
-        {fires.error && (
+        {fires?.error && (
           <Snackbar open={fires.error} autoHideDuration={6000}>
             <Alert severity="error">{error.message}</Alert>
           </Snackbar>

@@ -9,7 +9,6 @@ import { clearError, setError } from "./errorSlice";
 
 const initialState: FireState = {
   data: [],
-  filters: [],
   loading: false,
   error: false,
 };

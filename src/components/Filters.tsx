@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Select,
@@ -50,12 +50,14 @@ const Filters: React.FC<{
       }}
     >
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="satellite-select-label">Satellite</InputLabel>
+        <InputLabel>Satellite</InputLabel>
         <Select
-          labelId="satellite-select-label"
+          label="Satellite"
+          labelId="satellite-select"
           value={selectedSatellite}
           onChange={handleSatelliteChange}
-          label="Satellite"
+          // native={true} // for testing
+          inputProps={{ "data-testid": "satellite-select" }}
         >
           {satellitesOptions.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -67,6 +69,8 @@ const Filters: React.FC<{
       <FormControl fullWidth sx={{ mb: 2 }}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
+            format="DD-MM-YYYY HH"
+            label="Date and Time"
             ampm={false}
             views={["year", "month", "day", "hours"]}
             onChange={handleDateChange}

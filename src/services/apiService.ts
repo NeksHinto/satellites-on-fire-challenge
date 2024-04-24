@@ -13,7 +13,7 @@ export class ApiService {
       date: fire.date,
       latitude: fire.y,
       longitude: fire.x,
-      reliability: getReliability(fire.sat, fire.conf),
+      reliability: +getReliability(fire.sat, fire.conf).toFixed(1),
       satellite: fire.sat,
     }));
     return processedFires;

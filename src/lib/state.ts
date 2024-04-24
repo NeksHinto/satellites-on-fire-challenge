@@ -1,8 +1,7 @@
-import { FilterOptions, Fire } from "./types";
+import { Fire } from "./types";
 
 export interface FireState {
   data: Fire[];
-  filters: FilterOptions[];
   loading: boolean;
   error: boolean;
 }

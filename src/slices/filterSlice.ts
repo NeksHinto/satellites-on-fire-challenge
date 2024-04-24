@@ -3,7 +3,7 @@ import { FilterState } from "../lib/state";
 import dayjs from "dayjs";
 
 const initialState: FilterState = {
-  date: dayjs("01-01-2023").format(),
+  date: dayjs().format(),
   satellite: "",
 };
 
